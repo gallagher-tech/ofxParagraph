@@ -102,6 +102,34 @@ int ofxParagraph::getStringHeight(std::string s)
     return mFont->height(s);
 }
 
+std::vector<ofRectangle> ofxParagraph::getWordBoundaries()
+{
+    std::vector<ofRectangle> bounds;
+    bounds.reserve( mWords.size() );
+    for (auto& word : mWords) {
+        bounds.emplace_back( 
+            this->x + word.rect.x - mWordBoundaryPadding,
+            this->y + word.rect.y - mLineHeight - mWordBoundaryPadding,
+            word.rect.width + (mWordBoundaryPadding * 2),
+            mLineHeight + (mWordBoundaryPadding * 2) );
+    }
+    return bounds;
+}
+
+ofRectangle ofxParagraph::getBoundaries()
+{
+    auto wordBounds = getWordBoundaries();
+    auto minPt = glm::vec2( std::numeric_limits<float>::max() );
+    auto maxPt = glm::vec2( std::numeric_limits<float>::min() );
+    for (auto& wordBox : wordBounds) {
+        minPt.x = std::min( minPt.x, wordBox.x );
+        minPt.y = std::min( minPt.y, wordBox.y );
+        maxPt.x = std::max( maxPt.x, wordBox.getRight() );
+        maxPt.y = std::max( maxPt.y, wordBox.getBottom() );
+    }
+    return ofRectangle( minPt, maxPt );
+}
+
 void ofxParagraph::setPosition(int x, int y)
 {
     this->x = x;

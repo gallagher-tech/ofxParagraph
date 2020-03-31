@@ -59,6 +59,8 @@ class ofxParagraph{
         int getWidth();
         int getHeight();
         int getStringHeight(std::string str = "");
+        std::vector<ofRectangle> getWordBoundaries();
+        ofRectangle getBoundaries();
     
         void draw();
         void draw(int x, int y);
